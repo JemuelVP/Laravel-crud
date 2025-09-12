@@ -9,8 +9,10 @@
                         <h4>All Posts</h4>
                     </div>
                     <div class="col-md-6 d-flex justify-content-end">
-                        <a class="btn btn-success mx-1" href="{{ route('posts.create') }}">Create</a>
-                        <a class="btn btn-warning mx-1" href="{{ route('posts.trashed') }}">Trashed</a>
+                        @can('create', \App\Models\Post::class)
+                            <a class="btn btn-success mx-1" href="{{ route('posts.create') }}">Create</a>
+                            <a class="btn btn-warning mx-1" href="{{ route('posts.trashed') }}">Trashed</a>
+                        @endcan
                     </div>
                 </div>
 
@@ -41,13 +43,18 @@
                                 <td>{{ date('d-m-Y'), strtotime($post->created_at) }}</td>
                                 <td>
                                     <a class="btn-sm btn-success btn" href="{{ route('posts.show', $post->id) }}">Show</a>
-                                    <a class="btn-sm btn-primary btn" href="{{ route('posts.edit', $post->id) }}">Edit</a>
-                                    <form action="{{ route('posts.destroy', $post->id) }}" method="POST"
-                                        style="display: inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn-sm btn-danger btn" type="submit">Delete</button>
-                                    </form>
+                                    @can('update', $post)
+                                        <a class="btn-sm btn-primary btn" href="{{ route('posts.edit', $post->id) }}">Edit</a>
+                                    @endcan
+                                    @can('delete', $post)
+                                        <form action="{{ route('posts.destroy', $post->id) }}" method="POST"
+                                            style="display: inline-block">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn-sm btn-danger btn" type="submit">Delete</button>
+                                        </form>
+                                    @endcan
+
                                 </td>
                             </tr>
                         @endforeach
